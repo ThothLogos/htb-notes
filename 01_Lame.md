@@ -3,9 +3,12 @@ Attempted:  1st
 Date:       25012020
 
 `nmap -A 10.10.10.3`
-
- - Open: ftp/21, ssh/22
- - FTP allows Anonymous login. "FTP code 230"
+```
+PORT    STATE SERVICE     VERSION
+21/tcp  open  ftp         vsftpd 2.3.4
+|_ftp-anon: Anonymous FTP login allowed (FTP code 230)
+| ftp-syst: 
+|   STAT: 
 | FTP server status:
 |      Connected to 10.10.14.7
 |      Logged in as ftp
@@ -21,7 +24,7 @@ Date:       25012020
 |_  2048 56:56:24:0f:21:1d:de:a7:2b:ae:61:b1:24:3d:e8:f3 (RSA)
 139/tcp open  netbios-ssn Samba smbd 3.X - 4.X (workgroup: WORKGROUP)
 445/tcp open  netbios-ssn Samba smbd 3.X - 4.X (workgroup: WORKGROUP)
-
+```
 
 Attempted `smbclient -L 10.10.10.3 -p 445` as well as port `139`
   received: `protocol negotiation failed: NT_STATUS_CONNECTION_DISCONNECTED`
@@ -32,6 +35,7 @@ Possible CVE: https://www.samba.org/samba/security/CVE-2017-7494.html
 
 Attempted: `enum4linux 10.10.10.3`
 
+```
 Starting enum4linux v0.8.9 ( http://labs.portcullis.co.uk/application/enum4linux/ ) on Sat Jan 25 05:24:54 2020
 
  ========================== 
@@ -42,10 +46,13 @@ RID Range ........ 500-550,1000-1050
 Username ......... ''
 Password ......... ''
 Known Usernames .. administrator, guest, krbtgt, domain admins, root, bin, none
-
+```
 
 Attempted: `smbmap -H 10.10.10.3 -P 445 -v`
+
+```
 
 [+] Finding open SMB ports....
 [+] User SMB session established on 10.10.10.3...
 [+] 10.10.10.3:445 is running Unix (name:LAME) (domain:LAME)
+```
