@@ -120,3 +120,23 @@ thoth@kali:~/Projects/htb-notes/machines/Devel/dumps$ curl -v -X TRACE -H "Host:
 
 <html removed>
 ```
+ - The paper goes on to describe using JS to grab response data, I tried:
+
+ ```html
+ <!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+  </head>
+  <body>
+    <script>
+      var xhr = new XMLHttpRequest();
+      xhr.open('TRACE', 'http://10.10.10.5/', false);
+      xhr.send(null);
+      if(200 == xhr.status)
+        alert(xhr.responseText);
+    </script>
+  </body>
+</html>
+```
+... the result being blocked by the browser with `SecurityError: The operation is insecure.`. We're trying old shit.

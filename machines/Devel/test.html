@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+  </head>
+  <body>
+    <script>
+      var xhr = new XMLHttpRequest();
+      xhr.open('TRACE', 'http://10.10.10.5/', false);
+      xhr.send(null);
+      if(200 == xhr.status)
+        alert(xhr.responseText);
+    </script>
+  </body>
+</html>
