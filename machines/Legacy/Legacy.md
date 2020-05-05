@@ -1,8 +1,7 @@
 # Legacy 10.10.10.4 - Windows
 
-__User__: 001 - Initial Attempt
-
-__Root__: 001 - Initial Attempt
+ - __User__: 001 - 1st Attempt
+ - __Root__: 001 - 1st Attempt
 
 ## 00 - Initial Attempt, 05/04/20
 
