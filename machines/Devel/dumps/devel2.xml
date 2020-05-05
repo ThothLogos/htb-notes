@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE nmaprun>
+<?xml-stylesheet href="file:///usr/bin/../share/nmap/nmap.xsl" type="text/xsl"?>
+<!-- Nmap 7.80 scan initiated Tue May  5 14:00:33 2020 as: nmap -A -T4 -oA devel2 -p- 10.10.10.5 -->
+<nmaprun scanner="nmap" args="nmap -A -T4 -oA devel2 -p- 10.10.10.5" start="1588701633" startstr="Tue May  5 14:00:33 2020" version="7.80" xmloutputversion="1.04">
+<scaninfo type="connect" protocol="tcp" numservices="65535" services="1-65535"/>
+<verbose level="0"/>
+<debugging level="0"/>
+<host starttime="1588701633" endtime="1588701727"><status state="up" reason="syn-ack" reason_ttl="0"/>
+<address addr="10.10.10.5" addrtype="ipv4"/>
+<hostnames>
+</hostnames>
+<ports><extraports state="filtered" count="65533">
+<extrareasons reason="no-responses" count="65533"/>
+</extraports>
+<port protocol="tcp" portid="21"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="ftp" product="Microsoft ftpd" ostype="Windows" method="probed" conf="10"><cpe>cpe:/a:microsoft:ftp_service</cpe><cpe>cpe:/o:microsoft:windows</cpe></service><script id="ftp-anon" output="Anonymous FTP login allowed (FTP code 230)&#xa;03-18-17  02:06AM       &lt;DIR&gt;          aspnet_client&#xa;03-17-17  05:37PM                  689 iisstart.htm&#xa;03-17-17  05:37PM               184946 welcome.png"/><script id="ftp-syst" output="&#xa;  SYST: Windows_NT"><elem key="SYST">Windows_NT</elem>
+</script></port>
+<port protocol="tcp" portid="80"><state state="open" reason="syn-ack" reason_ttl="0"/><service name="http" product="Microsoft IIS httpd" version="7.5" ostype="Windows" method="probed" conf="10"><cpe>cpe:/a:microsoft:iis:7.5</cpe><cpe>cpe:/o:microsoft:windows</cpe></service><script id="http-methods" output="&#xa;  Potentially risky methods: TRACE"><table key="Potentially risky methods">
+<elem>TRACE</elem>
+</table>
+</script><script id="http-server-header" output="Microsoft-IIS/7.5"><elem>Microsoft-IIS/7.5</elem>
+</script><script id="http-title" output="IIS7"><elem key="title">IIS7</elem>
+</script></port>
+</ports>
+<times srtt="30500" rttvar="1930" to="100000"/>
+</host>
+<runstats><finished time="1588701727" timestr="Tue May  5 14:02:07 2020" elapsed="94.37" summary="Nmap done at Tue May  5 14:02:07 2020; 1 IP address (1 host up) scanned in 94.37 seconds" exit="success"/><hosts up="1" down="0" total="1"/>
+</runstats>
+</nmaprun>
