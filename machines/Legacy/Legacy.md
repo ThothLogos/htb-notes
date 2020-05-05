@@ -1,8 +1,10 @@
 # Legacy 10.10.10.4 - Windows
 
-## 00 - Initial Attempt, 05/04/20
+__User__: 001 - Initial Attempt
 
-__(Successful user & root day-of, number: 001 for both.)__
+__Root__: 001 - Initial Attempt
+
+## 00 - Initial Attempt, 05/04/20
 
 `nmap -sC -sV -oA legacy -Pn 10.10.10.4`
 
