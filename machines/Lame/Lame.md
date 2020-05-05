@@ -1,5 +1,8 @@
 # Lame 10.10.10.3 - Linux
 
+__User__: 002 - Second Attempt
+__Root__: 002 - Second Attempt
+
 ## 00 - Initial Attempt, 01/25/2020
 
 `nmap -A 10.10.10.3`
