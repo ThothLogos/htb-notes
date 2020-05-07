@@ -103,3 +103,24 @@ From the nikto scan, `_vti_inf.html`:
     TPScriptUrl="_vti_bin/owssvr.dll"
 -->
 ```
+
+## Post-Sleep Continuation
+
+ - Found a defcon presentation from 2003? (Defcon 11): https://defcon.org/images/defcon-11/dc-11-presentations/dc-11-Shannon/presentations/dc-11-shannon.pdf
+
+ - It explains a bit about FrontPage's request handling structure. The exploitation tool they demo'd is no longer live, though I didn't didn't too hard.
+
+ - A detailed vuln breakdown here: https://dl.packetstormsecurity.net/9910-exploits/webfolders.txt
+
+ - I made a local copy to make sure it persists as `packetstormsec_webfolders.txt`. Excellent overview of FrontPage's security model (lack of). This is a gold mine, summary:
+
+ ```
+ When the post to author.dll succeeds, the client will then be able to browse the
+web site as if it were browsing the file system.  And since an author has full
+authoring capabilities, he can also do things such as place executable files in
+the _vti_bin directory or other executable directories.  Having user read,
+write, and execute access is just one step away from having full admin access.
+```
+
+ - It looks like we need to intercept and modify HTTP requests to the server, and through some crafted POST requests we may be able to unlock access. Setting up proxy through BurpSuite...
+
