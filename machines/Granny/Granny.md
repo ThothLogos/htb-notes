@@ -1,7 +1,7 @@
 # Granny 10.10.10.15 - Windows
 
- - __User__:
- - __Root__:
+ - __User__: 010 - 1st Attempt
+ - __Root__: 010 - 1st Attempt
 
 ## Initial Attempt, 05/08/2020
 
