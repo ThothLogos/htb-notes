@@ -71,3 +71,7 @@ Host script results:
  - Port 80 is running a web server, `http://10.10.10.152/index.htm` is the landing page which is a login for a network monitoring service.
  - The version is `PRTG Network Monitor 18.1.37.13946` from source
  - The default user/pass `prtgadmin/prtgadmin` does not work
+ - FTP on 21 is open for anonymous use. Was able to get the `user.txt` flag real quick as a non-authed user.
+ - Grabbed a log file `ex190226.log` from `wmsvc`, there's a user `netmon\administrator`.
+  - Netmon is making `POST`s to post `8172`
+ - 139/445 are here - Samba
