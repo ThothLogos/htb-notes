@@ -1,0 +1,12 @@
+POST /_vti_bin/_vti_aut/author.dll HTTP/1.1
+MIME-Version: 1.0
+Accept: auth/sicily
+Content-Length: 219
+Host: 10.10.14.53
+Content-Type: application/x-www-form-urlencoded
+X-Vermeer-Content-Type: application/x-www-form-urlencoded
+Connection: Keep-Alive
+
+method=list+documents%3a3%2e0%2e2%2e1706&service%5fname=&listHiddenDocs=true&lis
+tExplorerDocs=true&listRecurse=false&listFiles=true&listFolders=true&listLinkInf
+o=false&listIncludeParent=true&listDerived=false&listBorders=false
